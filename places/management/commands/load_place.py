@@ -1,65 +1,71 @@
 import logging
-import logging
-
 import requests
-from django.core.files.base import ContentFile
+
+from places.models import Place, Image
+
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.management.base import BaseCommand
+from django.core.files.base import ContentFile
 
-from places.models import Place, PlaceImage
 
-
-def add_imgs_to_place(place, num, url):
+def load_place_image(place, num, url):
     try:
+        logging.info(f"downloading image from url: {url}")
         response = requests.get(url)
         response.raise_for_status()
 
-        image_title = f'{num} {place.title}'
-        place_image, created = PlaceImage.objects.get_or_create(
+        Image.objects.get_or_create(
             place=place,
-            title=image_title,
             position=num,
+            image=ContentFile(response.content, name=f'{num} {place}')
         )
-
-        place_image.image.save(f'{image_title}.jpg', ContentFile(response.content), save=True)
-    except:
+    except requests.HTTPError:
         logging.info('Не удалось загрузить изображение')
+    except MultipleObjectsReturned:
+        logging.info('Существует больше одного места с таким названием')
 
 
-def add_place(json):
-    title = json['title']
-    description_short = json['description_short']
-    description_long = json['description_long']
-    lng = json['coordinates']['lng']
-    lat = json['coordinates']['lat']
+def add_place(serialized_place):
+    try:
+        title = serialized_place['title']
 
-    images_urls = json['imgs']
+        place_descriptions = {
+            'description_short': serialized_place.get('description_short', ''),
+            'description_long': serialized_place.get('description_long', ''),
+            'lng': serialized_place['coordinates']['lng'],
+            'lat': serialized_place['coordinates']['lat'],
+        }
+    except KeyError as unfinded_key:
+        logging.error(f'Не хватает обязательного аргумента {unfinded_key}')
+        return
 
-    place, created = Place.objects.get_or_create(
+    place, created = Place.objects.update_or_create(
         title=title,
-        description_short=description_short,
-        description_long=description_long,
-        lng=lng,
-        lat=lat,
+        defaults=place_descriptions
     )
+    if not created:
+        return
 
+    images_urls = serialized_place.get('imgs', [])
     for num, url in enumerate(images_urls, start=1):
-        add_imgs_to_place(place, num, url)
+        load_place_image(place, num, url)
 
 
 def main(url):
     try:
+        logging.info(f"downloading json from url: {url}")
         response = requests.get(url)
         response.raise_for_status()
 
-        place_json = response.json()
+        serialized_place = response.json()
 
-        add_place(place_json)
-    except:
-        logging.info('Ошыпка')
+        add_place(serialized_place)
+    except requests.HTTPError:
+        logging.info('Ошибка загрузки. Проверьте ссылку')
 
 
 class Command(BaseCommand):
-    help = ''
+    help = 'Loading place to db from url with json'
 
     def handle(self, *args, **options):
         main(options['url'])
