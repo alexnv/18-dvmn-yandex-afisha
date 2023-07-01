@@ -37,6 +37,14 @@ class Place(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return self.title
+
+    position = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         verbose_name = 'место'
         verbose_name_plural = 'места'
@@ -48,16 +56,26 @@ class PlaceImage(models.Model):
         on_delete=models.CASCADE,
         related_name='images'
     )
+
     title = models.CharField(
         'Название',
         max_length=200,
         blank=True,
         null=True,
     )
+
     image = models.ImageField(
         blank=True,
         null=True,
     )
+
+    position = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.title if self.title else ""
 
     class Meta:
         verbose_name = 'изображение'
