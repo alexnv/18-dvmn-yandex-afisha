@@ -30,7 +30,7 @@ DEBUG=true                                     # true or false
 ALLOWED_HOSTS=127.0.0.1, .pythonanywhere.com   # hosts. For local: 127.0.0.1
 
 STATIC_URL=/static/                            # your static files url
-STATIC_ROOT=static                             # your static files dir name
+STATIC_ROOT=assets                             # your static files dir name
 
 MEDIA_URL=/media/                              # media files url.  Format: '/media_url/'
 MEDIA_ROOT=media                               #media files dir name
@@ -49,7 +49,36 @@ python3 manage.py createsuperuser
 
 ```
 
-6. run on pythonanywhere.com
+6. to run on pythonanywhere.com
 ```commandline
 python3 manage.py collectstatic 
+```
+
+7. To start local site on `127.0.0.1:8000` domain:
+
+```commandline
+python3 manage.py runserver
+```
+## Help function
+
+To loading places info from url with JSON-data, looking like:
+
+```commandline
+{
+    "title": "Place_name",
+    "imgs": [
+        list of images urls
+    ],
+    "description_short": short descriptions (str)
+    "description_long": long description (may contains html-tags)
+    "coordinates": {
+        "lng": "99.99999",
+        "lat": "99.9999999"
+    }
+```
+
+Running script:
+
+```commandline
+python manage.py load_place *url*
 ```
