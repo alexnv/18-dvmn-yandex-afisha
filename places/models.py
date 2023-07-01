@@ -51,29 +51,17 @@ class Place(models.Model):
         verbose_name_plural = 'места'
 
 
-class PlaceImage(models.Model):
+class Image(models.Model):
     place = models.ForeignKey(
         'Place',
         on_delete=models.CASCADE,
         related_name='images'
     )
 
-    title = models.CharField(
-        'Название',
-        max_length=200,
-        blank=True,
-        null=True,
-    )
-
-    image = models.ImageField(
-        blank=True,
-        null=True,
-    )
+    image = models.ImageField()
 
     position = models.IntegerField(
         default=1,
-        blank=True,
-        null=True,
         db_index=True
     )
 

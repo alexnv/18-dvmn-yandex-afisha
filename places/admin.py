@@ -2,39 +2,41 @@ from adminsortable2.admin import SortableStackedInline, SortableAdminBase
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Place, PlaceImage
+from .models import Place, Image
 
 
-@admin.register(PlaceImage)
-class PlaceImageAdmin(admin.ModelAdmin):
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
     fields = (
-        'title',
         'place',
         'image',
         'position',
         'preview',
     )
-    list_display = ['title', ]
+
     readonly_fields = ("preview",)
 
     def preview(self, obj):
-        return mark_safe(f'<img src="{obj.image.url}" style="max-height: 200px;">')
+        url = obj.image.url
+        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
 
 
-class PlaceImageInline(SortableStackedInline):
-    model = PlaceImage
+class ImageInline(SortableStackedInline):
+    model = Image
     fields = ['image', 'preview', ]
 
     readonly_fields = ("preview",)
 
-    def preview(self, model):
-        return mark_safe(f'<img src="{model.image.url}" style="max-height: 200px;">')
 
-    def get_extra(self, request, obj=Place, ):
-        extra = 2
-        if obj:
-            return extra - obj.images.count()
-        return extra
+    def preview(self, model):
+        url = model.image.url
+        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
+
+    def get_extra(self, request, obj=None, **kwargs):
+        if obj.images.count():
+            return 0
+        else:
+            return 2
 
 
 @admin.register(Place)
@@ -45,4 +47,4 @@ class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
         'description_long',
         'lng',
         'lat',)
-    inlines = (PlaceImageInline,)
+    inlines = (ImageInline,)
