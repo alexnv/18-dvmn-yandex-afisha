@@ -39,8 +39,6 @@ MEDIA_ROOT=media                               #media files dir name
  4. Make migrations:
 
 ```commandline
-python3 manage.py makemigrations
-
 python3 manage.py migrate
 ```
 
@@ -48,3 +46,10 @@ python3 manage.py migrate
 
 ```commandline
 python3 manage.py createsuperuser
+
+```
+
+6. run on pythonanywhere.com
+```commandline
+python3 manage.py collectstatic 
+```
