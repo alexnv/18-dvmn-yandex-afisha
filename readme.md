@@ -13,7 +13,7 @@ Link for working site: [alexnv.pythonanywhere.com](https://alexnv.pythonanywhere
  1. Clone repository:
 
 ```commandline
-https://github.com/alexnv/18-dvmn-yandex-afisha
+git clone https://github.com/alexnv/18-dvmn-yandex-afisha
 ```
 
  2. Install requirements:

@@ -14,7 +14,7 @@ class ImageAdmin(admin.ModelAdmin):
         'preview',
     )
 
-    readonly_fields = ("preview",)
+    readonly_fields = ('preview',)
 
     def preview(self, obj):
         url = obj.image.url
@@ -25,7 +25,7 @@ class ImageInline(SortableStackedInline):
     model = Image
     fields = ['image', 'preview', ]
 
-    readonly_fields = ("preview",)
+    readonly_fields = ('preview',)
 
 
     def preview(self, model):
