@@ -5,8 +5,14 @@ from django.utils.safestring import mark_safe
 from .models import Place, Image
 
 
+class PreviewMixin(object):
+    def preview(self, obj):
+        url = obj.image.url
+        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
+
+
 @admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
+class ImageAdmin(admin.ModelAdmin, PreviewMixin):
     fields = (
         'place',
         'image',
@@ -16,27 +22,15 @@ class ImageAdmin(admin.ModelAdmin):
 
     readonly_fields = ('preview',)
 
-    def preview(self, obj):
-        url = obj.image.url
-        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
 
-
-class ImageInline(SortableStackedInline):
+class ImageInline(SortableStackedInline, PreviewMixin):
     model = Image
     fields = ['image', 'preview', ]
 
     readonly_fields = ('preview',)
 
-
-    def preview(self, model):
-        url = model.image.url
-        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
-
     def get_extra(self, request, obj=None, **kwargs):
-        if obj.images.count():
-            return 0
-        else:
-            return 2
+        return 0 if obj.images.exist() else 2
 
 
 @admin.register(Place)
@@ -46,5 +40,6 @@ class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
         'description_short',
         'description_long',
         'lng',
-        'lat',)
+        'lat',
+    )
     inlines = (ImageInline,)

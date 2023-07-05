@@ -12,33 +12,23 @@ class Place(models.Model):
     description_short = models.TextField(
         'Краткое описание',
         blank=True,
-        null=False,
-        default='',
     )
 
     description_long = HTMLField(
         'Полное описание',
         blank=True,
-        null=False,
-        default='',
     )
 
     lng = models.DecimalField(
         'Долгота',
         max_digits=22,
         decimal_places=16,
-        blank=False,
-        null=False,
-        default=0.0
     )
 
     lat = models.DecimalField(
         'Широта',
         max_digits=22,
         decimal_places=16,
-        blank=False,
-        null=False,
-        default=0.0
     )
 
     class Meta:
