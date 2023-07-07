@@ -14,7 +14,7 @@ def load_place_image(place, num, url):
         response = requests.get(url)
         response.raise_for_status()
 
-        Image.objects.get_or_create(
+        Image.objects.create(
             place=place,
             position=num,
             image=ContentFile(response.content, name=f'{num} {place}')
@@ -39,7 +39,7 @@ def add_place(serialized_place):
         logging.error(f'Не хватает обязательного аргумента {unfinded_key}')
         return
 
-    place, created = Place.objects.update_or_create(
+    place, created = Place.objects.get_or_create(
         title=title,
         defaults=place_descriptions
     )
