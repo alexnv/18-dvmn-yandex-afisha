@@ -57,7 +57,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             url = options['url']
-            logging.info(f"downloading json from url: {url}")
+            logging.info(f'downloading json from url: {url}')
             response = requests.get(url)
             response.raise_for_status()
 
