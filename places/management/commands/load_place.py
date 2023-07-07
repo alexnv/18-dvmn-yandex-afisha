@@ -1,11 +1,11 @@
 import logging
+
 import requests
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.files.base import ContentFile
+from django.core.management.base import BaseCommand
 
 from places.models import Place, Image
-
-from django.core.exceptions import MultipleObjectsReturned
-from django.core.management.base import BaseCommand
-from django.core.files.base import ContentFile
 
 
 def load_place_image(place, num, url):
@@ -51,24 +51,21 @@ def add_place(serialized_place):
         load_place_image(place, num, url)
 
 
-def main(url):
-    try:
-        logging.info(f"downloading json from url: {url}")
-        response = requests.get(url)
-        response.raise_for_status()
-
-        serialized_place = response.json()
-
-        add_place(serialized_place)
-    except requests.HTTPError:
-        logging.info('Ошибка загрузки. Проверьте ссылку')
-
-
 class Command(BaseCommand):
     help = 'Loading place to db from url with json'
 
     def handle(self, *args, **options):
-        main(options['url'])
+        try:
+            url = options['url']
+            logging.info(f"downloading json from url: {url}")
+            response = requests.get(url)
+            response.raise_for_status()
+
+            serialized_place = response.json()
+
+            add_place(serialized_place)
+        except requests.HTTPError:
+            logging.info('Ошибка загрузки. Проверьте ссылку')
 
     def add_arguments(self, parser):
         parser.add_argument('url')
