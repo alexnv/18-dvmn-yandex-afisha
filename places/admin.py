@@ -1,6 +1,6 @@
 from adminsortable2.admin import SortableStackedInline, SortableAdminBase
 from django.contrib import admin
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from .models import Place, Image
 
@@ -8,7 +8,7 @@ from .models import Place, Image
 class PreviewMixin(object):
     def preview(self, obj):
         url = obj.image.url
-        return mark_safe(f'<img src="{url}" style="max-height: 200px;">')
+        return format_html('<img src="{}" style="max-height: 200px;">', url)
 
 
 @admin.register(Image)
