@@ -6,8 +6,8 @@ from .models import Place, Image
 
 
 class PreviewMixin(object):
-    def preview(self, obj):
-        url = obj.image.url
+    def preview(self, model):
+        url = model.image.url
         return format_html('<img src="{}" style="max-height: 200px;">', url)
 
 
