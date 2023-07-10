@@ -27,7 +27,7 @@ def show_main(request):
         'geojson': {
             'type': 'FeatureCollection',
             'features': features,
-        }
+        },
     }
     return render(request, 'index.html', context=context)
 
