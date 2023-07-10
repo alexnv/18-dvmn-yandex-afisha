@@ -10,7 +10,7 @@ from places.models import Place, Image
 
 def load_place_image(place, num, url):
     try:
-        logging.info(f"downloading image from url: {url}")
+        logging.info(f'downloading image from url: {url}')
         response = requests.get(url)
         response.raise_for_status()
 
@@ -35,8 +35,8 @@ def add_place(serialized_place):
             'lng': serialized_place['coordinates']['lng'],
             'lat': serialized_place['coordinates']['lat'],
         }
-    except KeyError as unfinded_key:
-        logging.error(f'Не хватает обязательного аргумента {unfinded_key}')
+    except KeyError as undefined_key:
+        logging.error(f'Не хватает обязательного аргумента {undefined_key}')
         return
 
     place, created = Place.objects.get_or_create(
